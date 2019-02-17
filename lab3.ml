@@ -169,7 +169,10 @@ For example:
 ......................................................................*)
 
 let ids (enrollments: enrollment list) : int list =
-  List.sort_uniq (max) (List.map (fun x -> x.id) enrollments) ;;
+  match enrollments with 
+  | [] -> []
+  | [a] -> [a.id]
+  | x -> List.sort_uniq (max) (List.map (fun x -> x.id) x) ;;
   
 (*......................................................................
 Exercise 9: Define a function called verify that determines whether all
