@@ -43,7 +43,8 @@ expression.
 ......................................................................*)
 
 let add_point_pair (p1 : point_pair) (p2 : point_pair) : point_pair =
-  failwith "add_point_pair not impemented" ;;
+  match p1, p2 with 
+  | (x1, y1), (x2, y2) -> (x1 + x2, y1 + y2) ;;
 
 (* Analogously, we can define a point by using a record to package up
 the x and y coordinates. *)
@@ -57,8 +58,8 @@ Implement a function add_point_recd to add two points of type
 point_recd and returning a point _rec as well.
 ......................................................................*)
 
-let add_point_recd =
-  fun _ -> failwith "add_point_recd not implemented" ;;
+(* let add_point_recd (x : point_recd) (y : point_recd) : point_recd =
+   ;; *)
 
 (* Recall the dot product from Lab 2. The dot product of two points
 (x1, y1) and (x2, y2) is the sum of the products of their x and y
@@ -70,7 +71,8 @@ product for points encoded as the point_pair type.
 ......................................................................*)
 
 let dot_product_pair (p1 : point_pair) (p2 : point_pair) : int =
-  failwith "dot_product_pair not implemented" ;;
+  match p1, p2 with 
+  | (x1, y1), (x2, y2) -> x1*x2 + y1*y2 ;;
 
 (*......................................................................
 Exercise 4: Write a function dot_product_recd to compute the dot
@@ -78,7 +80,7 @@ product for points encoded as the point_recd type.
 ......................................................................*)
 
 let dot_product_recd (p1 : point_recd) (p2 : point_recd) : int =
-  failwith "dot_product_recd not implemented" ;;
+  p1.x*p2.x + p2.y*p1.y ;;
 
 (* Converting between the pair and record representations of points
 
@@ -93,7 +95,8 @@ point_pair to a point_recd.
 ......................................................................*)
 
 let point_pair_to_recd =
-  fun _ -> failwith "point_pair_to_recd not implemented" ;;
+  fun point -> match point with
+  | a, b -> {x = a; y = b} ;;
 
 (*......................................................................
 Exercise 6: Write a function point_recd_to_pair that converts a
@@ -101,7 +104,8 @@ point_recd to a point_pair.
 ......................................................................*)
 
 let point_recd_to_pair =
-  fun _ -> failwith "point_recd_to_pair not implemented" ;;
+  fun point -> match point with
+  | {x = a; y = b} -> (a, b) ;;
    
 (*======================================================================
 Part 2: A simple database of records
@@ -150,7 +154,7 @@ For example:
 let transcript (enrollments : enrollment list)
                (student : int)
              : enrollment list =
-  failwith "transcript not implemented" ;;
+  List.filter (fun enroll -> enroll.id = student) enrollments ;;
   
 (*......................................................................
 Exercise 8: Define a function called ids that takes an enrollment
@@ -165,7 +169,7 @@ For example:
 ......................................................................*)
 
 let ids (enrollments: enrollment list) : int list =
-  failwith "ids not implemented" ;;
+  List.sort_uniq (max) (List.map (fun x -> x.id) enrollments) ;;
   
 (*......................................................................
 Exercise 9: Define a function called verify that determines whether all
@@ -201,8 +205,11 @@ worry about explicitly handling the anomalous case when the two lists
 are of different lengths.)
 ......................................................................*)
 
-let zip =
-  fun _ -> failwith "zip not implemented" ;;
+let rec zip =
+  fun x y -> 
+  match x, y with
+  | [], [] -> []
+  | xhd :: xtl, yhd :: ytl -> (xhd, yhd) :: (zip xtl ytl) ;;
 
 (*......................................................................
 Exercise 11: Partitioning a list -- Given a boolean function, say
@@ -228,9 +235,18 @@ should be as polymorphic as possible?
 
 Now write the function.
 ......................................................................*)
-   
-let partition =
-  fun _ -> failwith "partition not implemented" ;;
+
+let rec partitioner = 
+  fun x cond lst1 lst2 ->
+  match x with
+  | [] -> (lst1, lst2)
+  | hd :: tl ->
+    if cond hd
+    then partitioner tl cond (lst1 @ [hd]) lst2
+    else partitioner tl cond lst1 (lst2 @ [hd]) ;;
+
+let rec partition =
+  fun cond lst -> partitioner lst cond [] [] ;;
 
 (*......................................................................
 Exercise 12: We can think of function application itself as a
@@ -261,10 +277,16 @@ takes its two arguments curried, that is, one at a time.
 What is the most general (polymorphic) type for its first argument
 (the function to be applied)?
 
+fun 'a -> 'b
+
 What is the most general type for its second argument (the argument to
 apply it to)?
 
+'a
+
 What is the type of its result?
+
+'b
 
 Given the above, what should the type of the function "apply" be?
 
@@ -272,4 +294,4 @@ Now write the function.
 ......................................................................*)
 
 let apply =
-  fun _ -> failwith "apply not implemented" ;;
+  fun x y -> x y ;;
