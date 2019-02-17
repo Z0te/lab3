@@ -58,8 +58,8 @@ Implement a function add_point_recd to add two points of type
 point_recd and returning a point _rec as well.
 ......................................................................*)
 
-(* let add_point_recd (x : point_recd) (y : point_recd) : point_recd =
-   ;; *)
+let add_point_recd (x : point_recd) (y : point_recd) : point_recd =
+  { x = x.x + y.x; y = x.y + y.y } ;;
 
 (* Recall the dot product from Lab 2. The dot product of two points
 (x1, y1) and (x2, y2) is the sum of the products of their x and y
