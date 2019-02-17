@@ -182,15 +182,15 @@ For example:
 ......................................................................*)
 
 let verify (enrollments : enrollment list) : bool =
-  let rec checker (id : int) : bool =
-    match transcript enrollments id with
+  let rec checker (lst: enrollment list) : bool =
+    match lst with
     | [] -> true
     | [a] -> true
     | [a; b] -> a.name = b.name
     | hd1 :: (hd2 :: tl) -> 
       if hd1.name = hd2.name then checker tl
       else false 
-  in List.fold_left (fun acc id -> if acc then checker id else acc) true (ids enrollments) ;;
+  in List.fold_left (fun acc id -> if acc then checker (transcript enrollments id) else acc) true (ids enrollments) ;;
 
 (*======================================================================
 Part 3: Polymorphism
