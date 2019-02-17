@@ -182,7 +182,15 @@ For example:
 ......................................................................*)
 
 let verify (enrollments : enrollment list) : bool =
-  failwith "verify not implemented" ;;
+  let rec checker (id : int) : bool =
+    match transcript enrollments id with
+    | [] -> true
+    | [a] -> true
+    | [a; b] -> a.name = b.name
+    | hd1 :: (hd2 :: tl) -> 
+      if hd1.name = hd2.name then checker tl
+      else false 
+  in List.fold_left (fun acc id -> if acc then checker id else acc) true (ids enrollments) ;;
 
 (*======================================================================
 Part 3: Polymorphism
@@ -205,8 +213,7 @@ worry about explicitly handling the anomalous case when the two lists
 are of different lengths.)
 ......................................................................*)
 
-let rec zip =
-  fun x y -> 
+let rec zip (x : 'a list) (y : 'b list) : ('a * 'b) list =
   match x, y with
   | [], [] -> []
   | xhd :: xtl, yhd :: ytl -> (xhd, yhd) :: (zip xtl ytl) ;;
@@ -236,9 +243,8 @@ should be as polymorphic as possible?
 Now write the function.
 ......................................................................*)
 
-let rec partitioner = 
-  fun x cond lst1 lst2 ->
-  match x with
+let rec partitioner (x : 'a list) (cond : 'a -> bool) (lst1: 'a list) (lst2: 'a list) = 
+    match x with
   | [] -> (lst1, lst2)
   | hd :: tl ->
     if cond hd
