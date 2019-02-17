@@ -169,10 +169,8 @@ For example:
 ......................................................................*)
 
 let ids (enrollments: enrollment list) : int list =
-  match enrollments with 
-  | [] -> []
-  | [a] -> [a.id]
-  | x -> List.sort_uniq (max) (List.map (fun x -> x.id) x) ;;
+  List.sort_uniq (compare)
+  (List.map (fun student -> student.id) enrollments) ;;
   
 (*......................................................................
 Exercise 9: Define a function called verify that determines whether all
@@ -183,17 +181,13 @@ For example:
 # verify college ;;
 - : bool = false
 ......................................................................*)
+let names (enrollments : enrollment list) : string list =
+  List.sort_uniq (compare) (List.map (fun { name; _ } -> name) enrollments) ;;
 
 let verify (enrollments : enrollment list) : bool =
-  let rec checker (lst: enrollment list) : bool =
-    match lst with
-    | [] -> true
-    | [a] -> true
-    | [a; b] -> a.name = b.name
-    | hd1 :: (hd2 :: tl) -> 
-      if hd1.name = hd2.name then checker tl
-      else false 
-  in List.fold_left (fun acc id -> if acc then checker (transcript enrollments id) else acc) true (ids enrollments) ;;
+  List.for_all (fun l -> List.length l = 1) 
+               (List.map (fun student -> names (transcript enrollments student))
+                         (ids enrollments)) ;;
 
 (*======================================================================
 Part 3: Polymorphism
